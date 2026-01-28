@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Internat - Votes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0f1110;
+            --bg-card: #1a1d1b;
+            --bg-card-hover: #232725;
+            --green-primary: #4ade80;
+            --green-secondary: #22c55e;
+            --green-dark: #166534;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #2d3230;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1d1b 50%, #0f1912 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            padding: 32px 20px;
+            margin-bottom: 24px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            animation: fadeInDown 0.6s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            background: var(--bg-card);
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%);
+            color: var(--bg-dark);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+        }
+
+        .tab:hover:not(.active) {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        /* SECTIONS */
+        .section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* SEARCH BOX */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            font-size: 1rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-box:focus {
+            border-color: var(--green-primary);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+        }
+
+        .search-btn:active {
+            transform: translateY(-50%) scale(0.98);
+        }
+
+        /* RESULTS */
+        .results {
+            display: grid;
+            gap: 12px;
+        }
+
+        .track-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .track-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--green-primary);
+            transform: translateX(4px);
+        }
+
+        .track-cover {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg-dark);
+            flex-shrink: 0;
+        }
+
+        .track-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .track-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-artist {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-duration {
+            color: var(--green-primary);
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .add-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3);
+        }
+
+        .add-btn:active {
+            transform: scale(0.98);
+        }
+
+        .add-btn.added {
+            background: var(--green-dark);
+            color: var(--green-primary);
+        }
+
+        /* PLAYLIST */
+        .playlist-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            animation: slideIn 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .vote-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .vote-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+
+        .vote-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .vote-btn:active {
+            transform: scale(0.95);
+        }
+
+        .vote-btn.upvote:hover {
+            background: var(--green-primary);
+        }
+
+        .vote-btn.downvote:hover {
+            background: #ef4444;
+        }
+
+        .vote-score {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--green-primary);
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .vote-score.negative {
+            color: #ef4444;
+        }
+
+        /* AUDIO PLAYER */
+        .audio-player {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .play-preview {
+            width: 36px;
+            height: 36px;
+            background: var(--green-primary);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .play-preview:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
+        }
+
+        .play-preview.playing {
+            background: #ef4444;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* LOADING */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--green-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+            }
+
+            .track-cover {
+                width: 50px;
+                height: 50px;
+            }
+
+            .track-title {
+                font-size: 0.9rem;
+            }
+
+            .track-artist {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* NOTIFICATION */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--green-primary);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 24px var(--shadow);
+            z-index: 1000;
+            animation: slideInRight 0.3s ease;
+            max-width: 300px;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .notification.success {
+            border-color: var(--green-primary);
+        }
+
+        .notification.error {
+            border-color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1 class="logo">🎵 Playlist Internat</h1>
+            <p class="subtitle">Ajoute tes sons et vote pour tes préférés !</p>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab active" data-tab="search">🔍 Rechercher</button>
+            <button class="tab" data-tab="playlist">📋 Playlist (<span id="playlistCount">0</span>)</button>
+        </div>
+
+        <!-- SEARCH SECTION -->
+        <div class="section active" id="searchSection">
+            <div class="search-container">
+                <input type="text" class="search-box" id="searchInput" placeholder="Rechercher un titre, artiste...">
+                <button class="search-btn" id="searchBtn">
+                    <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="results" id="results"></div>
+        </div>
+
+        <!-- PLAYLIST SECTION -->
+        <div class="section" id="playlistSection">
+            <div id="playlistContent"></div>
+        </div>
+    </div>
+
+    <!-- AUDIO ELEMENT -->
+    <audio id="audioPlayer"></audio>
+
+    <!-- FIREBASE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <script>
+        // ===== FIREBASE CONFIG =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7IaaSbME1fEsmqiYBLcQTHJvZ3kzsGbQ",
+            authDomain: "lecturo-42f9e.firebaseapp.com",
+            databaseURL: "https://lecturo-42f9e-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "lecturo-42f9e",
+            storageBucket: "lecturo-42f9e.firebasestorage.app",
+            messagingSenderId: "372170075148",
+            appId: "1:372170075148:web:79d682e34b1d015ff15229",
+            measurementId: "G-Y2LRWZMFY1"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const playlistRef = database.ref('playlist');
+
+        // ===== VARIABLES GLOBALES =====
+        let currentAudio = null;
+        let currentPlayingBtn = null;
+        let playlistData = {};
+
+        // ===== ELEMENTS DOM =====
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.section');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const results = document.getElementById('results');
+        const playlistContent = document.getElementById('playlistContent');
+        const playlistCount = document.getElementById('playlistCount');
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        // ===== TABS NAVIGATION =====
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetTab = tab.dataset.tab;
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(`${targetTab}Section`).classList.add('active');
+
+                if (targetTab === 'playlist') {
+                    loadPlaylist();
+                }
+            });
+        });
+
+        // ===== SEARCH DEEZER API =====
+        async function searchTracks(query) {
+            if (!query.trim()) return;
+
+            showLoading(results);
+
+            try {
+                // Utilisation d'un CORS proxy pour Deezer API
+                const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=20`)}`);
+                const data = await response.json();
+                const tracks = JSON.parse(data.contents);
+
+                displaySearchResults(tracks.data || []);
+            } catch (error) {
+                console.error('Erreur de recherche:', error);
+                showNotification('Erreur de recherche', 'error');
+                results.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Erreur de connexion</p></div>';
+            }
+        }
+
+        function displaySearchResults(tracks) {
+            if (tracks.length === 0) {
+                results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Aucun résultat trouvé</p></div>';
+                return;
+            }
+
+            results.innerHTML = tracks.map(track => `
+                <div class="track-card">
+                    <img src="${track.album.cover_medium}" alt="${track.title}" class="track-cover">
+                    <div class="track-info">
+                        <div class="track-title">${escapeHtml(track.title)}</div>
+                        <div class="track-artist">${escapeHtml(track.artist.name)}</div>
+                        <div class="track-duration">${formatDuration(track.duration)}</div>
+                    </div>
+                    ${track.preview ? `
+                        <button class="play-preview" onclick="playPreview('${track.preview}', this)">
+                            ▶
+                        </button>
+                    ` : ''}
+                    <button class="add-btn" onclick='addToPlaylist(${JSON.stringify({
+                        id: track.id,
+                        title: track.title,
+                        artist: track.artist.name,
+                        cover: track.album.cover_medium,
+                        duration: track.duration,
+                        preview: track.preview || null
+                    })})'>
+                        + Ajouter
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // ===== PREVIEW AUDIO =====
+        function playPreview(url, btn) {
+            if (currentAudio && audioPlayer.src === url && !audioPlayer.paused) {
+                audioPlayer.pause();
+                btn.innerHTML = '▶';
+                btn.classList.remove('playing');
+                currentPlayingBtn = null;
+            } else {
+                if (currentPlayingBtn) {
+                    currentPlayingBtn.innerHTML = '▶';
+                    currentPlayingBtn.classList.remove('playing');
+                }
+                
+                audioPlayer.src = url;
+                audioPlayer.play();
+                btn.innerHTML = '⏸';
+                btn.classList.add('playing');
+                currentPlayingBtn = btn;
+
+                audioPlayer.onended = () => {
+                    btn.innerHTML = '▶';
+                    btn.classList.remove('playing');
+                    currentPlayingBtn = null;
+                };
+            }
+        }
+
+        // ===== ADD TO PLAYLIST =====
+        function addToPlaylist(track) {
+            // Vérifier si la piste existe déjà
+            database.ref(`playlist/${track.id}`).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    showNotification('Ce titre est déjà dans la playlist !', 'error');
+                } else {
+                    // Ajouter avec score initial à 0
+                    database.ref(`playlist/${track.id}`).set({
+                        ...track,
+                        score: 0,
+                        addedAt: Date.now()
+                    }).then(() => {
+                        showNotification(`✅ "${track.title}" ajouté !`, 'success');
+                    }).catch(error => {
+                        console.error('Erreur Firebase:', error);
+                        showNotification('Erreur d\'ajout', 'error');
+                    });
+                }
+            });
+        }
+
+        // ===== VOTE SYSTEM =====
+        function vote(trackId, value) {
+            const trackRef = database.ref(`playlist/${trackId}`);
+            
+            trackRef.transaction((track) => {
+                if (track) {
+                    track.score = (track.score || 0) + value;
+                }
+                return track;
+            });
+        }
+
+        // ===== LOAD PLAYLIST =====
+        function loadPlaylist() {
+            showLoading(playlistContent);
+
+            playlistRef.on('value', (snapshot) => {
+                playlistData = snapshot.val() || {};
+                const tracks = Object.values(playlistData);
+
+                if (tracks.length === 0) {
+                    playlistContent.innerHTML = '<div class="empty-state"><div class="empty-icon">🎵</div><p>La playlist est vide.<br>Ajoute des sons !</p></div>';
+                    playlistCount.textContent = '0';
+                    return;
+                }
+
+                // Trier par score décroissant
+                tracks.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+                playlistCount.textContent = tracks.length;
+
+                playlistContent.innerHTML = tracks.map(track => `
+                    <div class="playlist-item">
+                        <div class="vote-controls">
+                            <button class="vote-btn upvote" onclick="vote(${track.id}, 1)">
+                                👍
+                            </button>
+                            <div class="vote-score ${track.score < 0 ? 'negative' : ''}">
+                                ${track.score || 0}
+                            </div>
+                            <button class="vote-btn downvote" onclick="vote(${track.id}, -1)">
+                                👎
+                            </button>
+                        </div>
+                        <img src="${track.cover}" alt="${track.title}" class="track-cover">
+                        <div class="track-info">
+                            <div class="track-title">${escapeHtml(track.title)}</div>
+                            <div class="track-artist">${escapeHtml(track.artist)}</div>
+                            <div class="track-duration">${formatDuration(track.duration)}</div>
+                        </div>
+                        ${track.preview ? `
+                            <button class="play-preview" onclick="playPreview('${track.preview}', this)">
+                                ▶
+                            </button>
+                        ` : ''}
+                    </div>
+                `).join('');
+            });
+        }
+
+        // ===== SEARCH EVENTS =====
+        searchBtn.addEventListener('click', () => {
+            searchTracks(searchInput.value);
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchTracks(searchInput.value);
+            }
+        });
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatDuration(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showLoading(element) {
+            element.innerHTML = '<div class="loading"><div class="spinner"></div><p>Chargement...</p></div>';
+        }
+
+        function showNotification(message, type = 'success') {
+            const notif = document.createElement('div');
+            notif.className = `notification ${type}`;
+            notif.textContent = message;
+            document.body.appendChild(notif);
+
+            setTimeout(() => {
+                notif.remove();
+            }, 3000);
+        }
+
+        // ===== INIT =====
+        loadPlaylist();
+    </script>
+</body>
+</html>
