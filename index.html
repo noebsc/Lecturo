@@ -540,7 +540,7 @@
     </div>
 
     <!-- AUDIO ELEMENT -->
-    <audio id="audioPlayer"></audio>
+    <audio id="audioPlayer" playsinline></audio>
 
     <!-- FIREBASE SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -582,10 +582,10 @@
         }
 
         // ===== VARIABLES GLOBALES =====
-        let currentAudio = null;
         let currentPlayingBtn = null;
         let playlistData = {};
         let currentPlayingUrl = null;
+        let audioUnlocked = false;
 
         // ===== ELEMENTS DOM =====
         const tabs = document.querySelectorAll('.tab');
@@ -596,6 +596,26 @@
         const playlistContent = document.getElementById('playlistContent');
         const playlistCount = document.getElementById('playlistCount');
         const audioPlayer = document.getElementById('audioPlayer');
+
+        // ===== UNLOCK AUDIO FOR MOBILE =====
+        function unlockAudio() {
+            if (audioUnlocked) return;
+            
+            const unlock = () => {
+                audioPlayer.play().then(() => {
+                    audioPlayer.pause();
+                    audioPlayer.currentTime = 0;
+                    audioUnlocked = true;
+                    document.removeEventListener('touchstart', unlock);
+                    document.removeEventListener('click', unlock);
+                }).catch(() => {});
+            };
+
+            document.addEventListener('touchstart', unlock, { once: true });
+            document.addEventListener('click', unlock, { once: true });
+        }
+
+        unlockAudio();
 
         // ===== TABS NAVIGATION =====
         tabs.forEach(tab => {
@@ -623,11 +643,11 @@
                 .trim();
         }
         
-        // ===== SEARCH AVEC RETRY INTELLIGENT =====
+        // ===== SEARCH CORRIGÉ (FIX BOUCLE INFINIE) =====
         async function searchTracks(query, attempt = 1) {
             if (!query.trim()) return;
         
-            const maxAttempts = 3;
+            const maxAttempts = 2;
             const originalQuery = query;
             
             if (attempt === 1) {
@@ -635,24 +655,14 @@
             }
         
             try {
-                let searchQuery = query;
+                let searchQuery = attempt === 2 ? normalizeQuery(query) : query;
                 
                 if (attempt === 2) {
-                    searchQuery = normalizeQuery(query);
                     results.innerHTML = `<div class="loading">
                         <div class="spinner"></div>
-                        <p>Nouvelle tentative sans accents...</p>
-                        <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 8px;">Recherche : "${searchQuery}"</p>
+                        <p>Recherche sans accents...</p>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 8px;">"${searchQuery}"</p>
                     </div>`;
-                }
-                
-                if (attempt === 3) {
-                    results.innerHTML = `<div class="loading">
-                        <div class="spinner"></div>
-                        <p>Dernière tentative...</p>
-                        <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 8px;">Patiente 3 secondes...</p>
-                    </div>`;
-                    await new Promise(resolve => setTimeout(resolve, 3000));
                 }
         
                 const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(searchQuery)}&limit=20`)}`);
@@ -668,29 +678,27 @@
                 
                 const tracks = await response.json();
                 
-                if ((!tracks.data || tracks.data.length === 0) && attempt === 1) {
-                    searchTracks(originalQuery, 2);
-                    return;
+                if (tracks.data && tracks.data.length > 0) {
+                    displaySearchResults(tracks.data);
+                } else if (attempt === 1) {
+                    setTimeout(() => searchTracks(originalQuery, 2), 500);
+                } else {
+                    results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Aucun résultat trouvé</p></div>';
                 }
-        
-                displaySearchResults(tracks.data || []);
                 
             } catch (error) {
                 console.error(`Erreur recherche (tentative ${attempt}):`, error);
                 
                 if (attempt < maxAttempts) {
-                    setTimeout(() => {
-                        searchTracks(originalQuery, attempt + 1);
-                    }, attempt === 1 ? 500 : 0);
+                    setTimeout(() => searchTracks(originalQuery, 2), 500);
                 } else {
-                    showNotification('Impossible de se connecter à la recherche', 'error');
+                    showNotification('Erreur de connexion', 'error');
                     results.innerHTML = `
                         <div class="empty-state">
                             <div class="empty-icon">⚠️</div>
                             <p style="font-weight: 600; margin-bottom: 8px;">Erreur de connexion</p>
                             <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 16px;">
-                                Impossible de charger les résultats après 3 tentatives.<br>
-                                Vérifie ta connexion internet.
+                                Impossible de charger les résultats.
                             </p>
                             <button 
                                 onclick="searchTracks('${originalQuery.replace(/'/g, "\\'")}', 1)" 
@@ -761,7 +769,7 @@
             });
         }
 
-        // ===== PREVIEW AUDIO CORRIGÉ POUR MOBILE =====
+        // ===== PREVIEW AUDIO CORRIGÉ MOBILE =====
         function playPreview(url, btn) {
             if (audioPlayer.src === url && !audioPlayer.paused) {
                 audioPlayer.pause();
@@ -777,17 +785,24 @@
                 
                 audioPlayer.pause();
                 audioPlayer.src = url;
+                audioPlayer.load();
                 currentPlayingUrl = url;
                 
-                setTimeout(() => {
-                    audioPlayer.play().catch(err => {
-                        console.log('Lecture interrompue:', err);
-                    });
-                }, 50);
+                const playPromise = audioPlayer.play();
                 
-                btn.innerHTML = '⏸';
-                btn.classList.add('playing');
-                currentPlayingBtn = btn;
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        btn.innerHTML = '⏸';
+                        btn.classList.add('playing');
+                        currentPlayingBtn = btn;
+                    }).catch((error) => {
+                        console.log('Erreur lecture:', error);
+                        btn.innerHTML = '▶';
+                        btn.classList.remove('playing');
+                        currentPlayingUrl = null;
+                        showNotification('Appuie sur le bouton pour jouer', 'error');
+                    });
+                }
 
                 audioPlayer.onended = () => {
                     btn.innerHTML = '▶';
@@ -797,7 +812,7 @@
                 };
 
                 audioPlayer.onpause = () => {
-                    if (audioPlayer.src === url) {
+                    if (audioPlayer.src === url && currentPlayingBtn === btn) {
                         currentPlayingUrl = null;
                     }
                 };
@@ -851,7 +866,6 @@
                 return track;
             }).then(() => {
                 recordVote(trackId, voteType);
-                loadPlaylist();
                 showNotification(value > 0 ? '👍 Vote enregistré !' : '👎 Vote enregistré !', 'success');
             });
         }
@@ -878,7 +892,7 @@
                     const upvoteClass = voteStatus === 'up' ? 'voted' : '';
                     const downvoteClass = voteStatus === 'down' ? 'voted' : '';
                     
-                    const isPlaying = currentPlayingUrl === track.preview;
+                    const isPlaying = currentPlayingUrl === track.preview && !audioPlayer.paused;
                     const playBtnIcon = isPlaying ? '⏸' : '▶';
                     const playBtnClass = isPlaying ? 'playing' : '';
 
