@@ -613,22 +613,112 @@
             });
         });
 
-        async function searchTracks(query) {
+        // ===== NORMALISATION DES CARACTÈRES =====
+        function normalizeQuery(str) {
+            return str
+                .normalize('NFD')                           // Décompose les accents
+                .replace(/[\u0300-\u036f]/g, '')           // Retire les accents
+                .replace(/[^a-zA-Z0-9\s]/g, '')            // Retire caractères spéciaux
+                .trim();
+        }
+        
+        // ===== SEARCH AVEC RETRY INTELLIGENT =====
+        async function searchTracks(query, attempt = 1) {
             if (!query.trim()) return;
         
-            showLoading(results);
+            const maxAttempts = 3;
+            const originalQuery = query;
+            
+            // Première tentative : query normale
+            if (attempt === 1) {
+                showLoading(results);
+            }
         
             try {
-                const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=20`)}`);
+                let searchQuery = query;
+                
+                // Tentative 2 : Normaliser les caractères
+                if (attempt === 2) {
+                    searchQuery = normalizeQuery(query);
+                    results.innerHTML = `<div class="loading">
+                        <div class="spinner"></div>
+                        <p>Nouvelle tentative sans accents...</p>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 8px;">Recherche : "${searchQuery}"</p>
+                    </div>`;
+                }
+                
+                // Tentative 3 : Après délai de 3 secondes
+                if (attempt === 3) {
+                    results.innerHTML = `<div class="loading">
+                        <div class="spinner"></div>
+                        <p>Dernière tentative...</p>
+                        <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 8px;">Patiente 3 secondes...</p>
+                    </div>`;
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+        
+                const response = await fetch(`https://corsproxy.io/?${encodeURIComponent(`https://api.deezer.com/search?q=${encodeURIComponent(searchQuery)}&limit=20`)}`);
+                
+                // Vérifier si la réponse est valide
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Invalid JSON response');
+                }
+                
                 const tracks = await response.json();
+                
+                // Si pas de résultats et qu'on n'a pas encore normalisé
+                if ((!tracks.data || tracks.data.length === 0) && attempt === 1) {
+                    searchTracks(originalQuery, 2);
+                    return;
+                }
         
                 displaySearchResults(tracks.data || []);
+                
             } catch (error) {
-                console.error('Erreur de recherche:', error);
-                showNotification('Erreur de recherche', 'error');
-                results.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Erreur de connexion</p></div>';
+                console.error(`Erreur recherche (tentative ${attempt}):`, error);
+                
+                // Retry si pas encore 3 tentatives
+                if (attempt < maxAttempts) {
+                    setTimeout(() => {
+                        searchTracks(originalQuery, attempt + 1);
+                    }, attempt === 1 ? 500 : 0); // Petit délai entre tentative 1 et 2
+                } else {
+                    // Échec final après 3 tentatives
+                    showNotification('Impossible de se connecter à la recherche', 'error');
+                    results.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⚠️</div>
+                            <p style="font-weight: 600; margin-bottom: 8px;">Erreur de connexion</p>
+                            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 16px;">
+                                Impossible de charger les résultats après 3 tentatives.<br>
+                                Vérifie ta connexion internet.
+                            </p>
+                            <button 
+                                onclick="searchTracks('${originalQuery.replace(/'/g, "\\'")}', 1)" 
+                                style="
+                                    padding: 10px 20px;
+                                    background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%);
+                                    color: var(--bg-dark);
+                                    border: none;
+                                    border-radius: 8px;
+                                    font-weight: 600;
+                                    cursor: pointer;
+                                    font-size: 0.9rem;
+                                "
+                            >
+                                🔄 Réessayer
+                            </button>
+                        </div>
+                    `;
+                }
             }
         }
+
         
         function displaySearchResults(tracks) {
             if (tracks.length === 0) {
