@@ -699,14 +699,19 @@
                 }
                 return [];
             }
-
+        
             showLoading(results);
-
+        
             const spotifyResults = [];
             const youtubeResults = [];
             const itunesResults = [];
             const deezerResults = [];
-
+            
+            let spotifyOk = false;
+            let youtubeOk = false;
+            let itunesOk = false;
+            let deezerOk = false;
+        
             // 1. SPOTIFY API (PRIORITAIRE)
             try {
                 const token = await getSpotifyToken();
@@ -733,12 +738,13 @@
                             releaseDate: track.album.release_date,
                             popularity: track.popularity
                         })));
+                        spotifyOk = true;
                     }
                 }
             } catch (error) {
-                console.warn('Spotify error:', error);
+                console.warn('⚠️ Spotify non disponible');
             }
-
+        
             // 2. YOUTUBE DATA API (PRIORITAIRE)
             try {
                 const response = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query + ' audio')}&type=video&videoCategoryId=10&maxResults=${limit}&key=${YOUTUBE_API_KEY}`);
@@ -757,11 +763,12 @@
                         api: 'YouTube',
                         album: 'YouTube'
                     })));
+                    youtubeOk = true;
                 }
             } catch (error) {
-                console.warn('YouTube error:', error);
+                console.warn('⚠️ YouTube non disponible');
             }
-
+        
             // 3. iTunes API (BACKUP)
             try {
                 const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&country=FR&limit=${limit}`);
@@ -781,11 +788,12 @@
                         releaseDate: track.releaseDate,
                         genre: track.primaryGenreName
                     })));
+                    itunesOk = true;
                 }
             } catch (error) {
-                console.warn('iTunes error:', error);
+                console.warn('⚠️ iTunes non disponible');
             }
-
+        
             // 4. Deezer API (BACKUP)
             try {
                 const response = await fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=${limit}`);
@@ -803,11 +811,27 @@
                         api: 'Deezer',
                         album: track.album.title
                     })));
+                    deezerOk = true;
                 }
             } catch (error) {
-                console.warn('Deezer error:', error);
+                console.warn('⚠️ Deezer non disponible');
             }
-
+        
+            // Vérifier si au moins une API a répondu
+            const atLeastOneApiWorking = spotifyOk || youtubeOk || itunesOk || deezerOk;
+            
+            if (!atLeastOneApiWorking) {
+                // AUCUNE API n'a répondu = erreur de connexion
+                results.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">⚠️</div>
+                        <p style="color: #ef4444; font-weight: 600;">Erreur de connexion</p>
+                        <p style="font-size: 0.85rem; margin-top: 8px;">Impossible de contacter les APIs musicales.<br>Vérifie ta connexion internet.</p>
+                    </div>
+                `;
+                return [];
+            }
+        
             // PRIORISATION : 10 premiers = Spotify/YouTube en alterné, puis le reste = iTunes/Deezer en alterné
             const merged = [];
             
@@ -832,15 +856,29 @@
                 if (itunesResults[i]) merged.push(itunesResults[i]);
                 if (deezerResults[i]) merged.push(deezerResults[i]);
             }
-
+        
             if (merged.length > 0) {
                 displayMixedResults(merged);
                 return merged;
             } else {
-                results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Aucun résultat trouvé</p></div>';
+                // Au moins une API a répondu mais aucun résultat trouvé
+                const workingApis = [];
+                if (spotifyOk) workingApis.push('Spotify');
+                if (youtubeOk) workingApis.push('YouTube');
+                if (itunesOk) workingApis.push('iTunes');
+                if (deezerOk) workingApis.push('Deezer');
+                
+                results.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>Aucun résultat trouvé</p>
+                        <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.7;">Recherche effectuée sur : ${workingApis.join(', ')}</p>
+                    </div>
+                `;
                 return [];
             }
         }
+
 
         // DÉLAI DE 2 SECONDES pour la recherche automatique
         const debouncedSearch = debounce(searchAllAPIs, 2000);
