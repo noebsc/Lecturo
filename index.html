@@ -277,6 +277,206 @@
             .track-artist { font-size: 0.8rem; }
             .sort-controls { flex-wrap: wrap; }
         }
+
+        /* RESULTS */
+        .results { display: grid; gap: 12px; }
+        .track-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 10px; display: flex; gap: 10px;
+            align-items: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideIn 0.3s ease; position: relative;
+            overflow: hidden;
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        .track-card:hover { background: var(--bg-card-hover); border-color: var(--green-primary); transform: translateX(4px); }
+        .track-card.no-preview { opacity: 0.7; }
+        .api-badge {
+            position: absolute; top: 6px; right: 6px; font-size: 0.6rem;
+            padding: 2px 5px; border-radius: 4px; background: var(--bg-dark);
+            color: var(--text-secondary); font-weight: 600; z-index: 1;
+        }
+        .track-cover { 
+            width: 55px; height: 55px; border-radius: 8px; object-fit: cover; 
+            background: var(--bg-dark); flex-shrink: 0; 
+        }
+        .track-info { flex: 1; min-width: 0; overflow: hidden; }
+        .track-title { 
+            font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+            padding-right: 50px; /* Espace pour le badge API */
+        }
+        .track-artist { 
+            color: var(--text-secondary); font-size: 0.8rem; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .track-duration { color: var(--green-primary); font-size: 0.75rem; font-weight: 500; margin-top: 2px; }
+        .no-preview-text { color: #ef4444; font-size: 0.65rem; margin-top: 2px; }
+        .add-btn {
+            padding: 8px 14px; background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%);
+            color: var(--bg-dark); border: none; border-radius: 8px; font-weight: 600;
+            font-size: 0.8rem; cursor: pointer; transition: all 0.3s ease; flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .add-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3); }
+        .add-btn:active { transform: scale(0.98); }
+        .add-btn.success { background: var(--green-dark); color: var(--green-primary); animation: successPulse 0.6s ease; }
+        @keyframes successPulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(74, 222, 128, 0.6); } 100% { transform: scale(1); } }
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .container { padding: 10px; }
+            .header { padding: 20px 14px; }
+            .logo { font-size: 1.5rem; }
+            .subtitle { font-size: 0.85rem; }
+            
+            /* Cards de recherche optimisées mobile */
+            .track-card {
+                padding: 8px;
+                gap: 8px;
+                flex-wrap: nowrap;
+            }
+            .track-cover { 
+                width: 48px; 
+                height: 48px; 
+            }
+            .track-title { 
+                font-size: 0.85rem;
+                padding-right: 45px;
+            }
+            .track-artist { font-size: 0.75rem; }
+            .track-duration { font-size: 0.7rem; }
+            .no-preview-text { font-size: 0.6rem; }
+            
+            .api-badge {
+                font-size: 0.55rem;
+                padding: 1px 4px;
+                top: 4px;
+                right: 4px;
+            }
+            
+            .play-preview {
+                width: 32px;
+                height: 32px;
+                font-size: 0.8rem;
+            }
+            
+            .add-btn {
+                padding: 7px 11px;
+                font-size: 0.75rem;
+            }
+            
+            /* Playlist items mobile */
+            .playlist-item {
+                padding: 8px;
+                gap: 8px;
+            }
+            
+            .modal-track-cover { width: 45px; height: 45px; }
+            .sort-controls { 
+                flex-wrap: wrap;
+                padding: 6px 8px;
+                gap: 6px;
+            }
+            .sort-btn {
+                padding: 5px 10px;
+                font-size: 0.7rem;
+            }
+            .download-btn {
+                padding: 5px 10px;
+                font-size: 0.7rem;
+            }
+            
+            /* Votes */
+            .vote-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+            .vote-score { font-size: 0.85rem; }
+            
+            /* Info button */
+            .info-btn {
+                width: 26px;
+                height: 26px;
+                font-size: 0.8rem;
+            }
+            
+            /* Admin controls */
+            .admin-btn {
+                padding: 5px 10px;
+                font-size: 0.7rem;
+            }
+            
+            /* Search box */
+            .search-box {
+                padding: 14px 45px 14px 16px;
+                font-size: 0.95rem;
+            }
+            
+            .search-btn {
+                width: 36px;
+                height: 36px;
+            }
+            
+            .manual-add-link {
+                font-size: 0.7rem;
+                margin-bottom: 16px;
+            }
+            
+            /* Modal */
+            .modal-content {
+                padding: 18px;
+                width: 95%;
+            }
+            
+            .modal-title { font-size: 1.1rem; }
+            
+            .modal-track {
+                padding: 10px;
+                gap: 8px;
+            }
+            
+            /* Tabs */
+            .tab {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+            
+            /* Empty state */
+            .empty-state { padding: 40px 15px; }
+            .empty-icon { font-size: 2.5rem; }
+        }
+        
+        /* Pour les très petits écrans */
+        @media (max-width: 380px) {
+            .track-card {
+                padding: 6px;
+                gap: 6px;
+            }
+            
+            .track-cover {
+                width: 42px;
+                height: 42px;
+            }
+            
+            .track-title {
+                font-size: 0.8rem;
+                padding-right: 40px;
+            }
+            
+            .track-artist { font-size: 0.7rem; }
+            
+            .add-btn {
+                padding: 6px 9px;
+                font-size: 0.7rem;
+            }
+            
+            .play-preview {
+                width: 28px;
+                height: 28px;
+                font-size: 0.75rem;
+            }
+        }
+
     </style>
 </head>
 <body>
