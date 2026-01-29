@@ -26,6 +26,7 @@
             padding-bottom: 60px;
         }
         .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+        
         /* HEADER */
         .header {
             text-align: center; padding: 32px 20px; margin-bottom: 24px;
@@ -41,13 +42,13 @@
             -webkit-text-fill-color: transparent; margin-bottom: 8px; letter-spacing: -0.5px;
         }
         .subtitle { color: var(--text-secondary); font-size: 0.9rem; }
-        /* ADMIN LOCK ICON */
         .admin-lock {
             position: absolute; top: 20px; right: 20px; width: 32px; height: 32px;
             cursor: pointer; opacity: 0.3; transition: all 0.3s ease;
         }
         .admin-lock:hover { opacity: 0.6; transform: scale(1.1); }
         .admin-lock.unlocked { opacity: 1; filter: drop-shadow(0 0 8px var(--green-primary)); }
+        
         /* TABS */
         .tabs { display: flex; gap: 8px; margin-bottom: 20px; background: var(--bg-card); padding: 6px; border-radius: 12px; border: 1px solid var(--border); }
         .tab {
@@ -57,10 +58,27 @@
         }
         .tab.active { background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%); color: var(--bg-dark); box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3); }
         .tab:hover:not(.active) { background: var(--bg-card-hover); color: var(--text-primary); }
+        
         /* SECTIONS */
         .section { display: none; animation: fadeIn 0.4s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* SORT CONTROLS */
+        .sort-controls {
+            display: flex; gap: 8px; margin-bottom: 16px; align-items: center;
+            background: var(--bg-card); padding: 8px 12px; border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .sort-label { font-size: 0.8rem; color: var(--text-secondary); }
+        .sort-btn {
+            padding: 6px 12px; background: var(--bg-dark); border: 1px solid var(--border);
+            border-radius: 6px; font-size: 0.75rem; color: var(--text-secondary);
+            cursor: pointer; transition: all 0.2s ease;
+        }
+        .sort-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
+        .sort-btn.active { background: var(--green-primary); color: var(--bg-dark); border-color: var(--green-primary); }
+        
         /* SEARCH BOX */
         .search-container { position: relative; margin-bottom: 20px; }
         .search-box {
@@ -80,21 +98,29 @@
         }
         .search-btn:hover { transform: translateY(-50%) scale(1.05); box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3); }
         .search-btn:active { transform: translateY(-50%) scale(0.98); }
+        
         /* RESULTS */
         .results { display: grid; gap: 12px; }
         .track-card {
             background: var(--bg-card); border: 1px solid var(--border);
             border-radius: 12px; padding: 12px; display: flex; gap: 12px;
-            align-items: center; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: slideIn 0.3s ease;
+            align-items: center; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideIn 0.3s ease; position: relative;
         }
         @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
         .track-card:hover { background: var(--bg-card-hover); border-color: var(--green-primary); transform: translateX(4px); }
+        .track-card.no-preview { opacity: 0.7; }
+        .api-badge {
+            position: absolute; top: 8px; right: 8px; font-size: 0.65rem;
+            padding: 2px 6px; border-radius: 4px; background: var(--bg-dark);
+            color: var(--text-secondary); font-weight: 600;
+        }
         .track-cover { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: var(--bg-dark); flex-shrink: 0; }
         .track-info { flex: 1; min-width: 0; }
         .track-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .track-artist { color: var(--text-secondary); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .track-duration { color: var(--green-primary); font-size: 0.8rem; font-weight: 500; }
+        .no-preview-text { color: #ef4444; font-size: 0.7rem; margin-top: 2px; }
         .add-btn {
             padding: 8px 16px; background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-secondary) 100%);
             color: var(--bg-dark); border: none; border-radius: 8px; font-weight: 600;
@@ -104,6 +130,7 @@
         .add-btn:active { transform: scale(0.98); }
         .add-btn.success { background: var(--green-dark); color: var(--green-primary); animation: successPulse 0.6s ease; }
         @keyframes successPulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(74, 222, 128, 0.6); } 100% { transform: scale(1); } }
+        
         /* PLAYLIST */
         .playlist-item {
             background: var(--bg-card); border: 1px solid var(--border);
@@ -125,6 +152,7 @@
         .vote-btn.voted { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
         .vote-score { font-weight: 700; font-size: 0.9rem; color: var(--green-primary); min-width: 36px; text-align: center; }
         .vote-score.negative { color: #ef4444; }
+        
         /* ADMIN CONTROLS */
         .admin-controls { display: none; gap: 4px; flex-direction: column; }
         .admin-controls.active { display: flex; }
@@ -133,6 +161,9 @@
         .delete-btn:hover { background: #dc2626; transform: scale(1.05); }
         .replace-btn { background: #f59e0b; color: white; }
         .replace-btn:hover { background: #d97706; transform: scale(1.05); }
+        .info-btn { background: #3b82f6; color: white; font-size: 0.85rem; width: 28px; height: 28px; padding: 0; display: flex; align-items: center; justify-content: center; }
+        .info-btn:hover { background: #2563eb; }
+        
         /* AUDIO PLAYER */
         .play-preview {
             width: 36px; height: 36px; background: var(--green-primary); border: none;
@@ -141,7 +172,9 @@
         }
         .play-preview:hover { transform: scale(1.1); box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4); }
         .play-preview.playing { background: #ef4444; animation: pulse 1.5s infinite; }
+        .play-preview:disabled { background: var(--border); cursor: not-allowed; opacity: 0.5; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        
         /* MODAL */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -150,8 +183,8 @@
         }
         .modal.active { display: flex; }
         .modal-content {
-            background: var(--bg-card); border-radius: 16px; padding: 24px; max-width: 500px;
-            width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid var(--border);
+            background: var(--bg-card); border-radius: 16px; padding: 24px; max-width: 600px;
+            width: 90%; max-height: 85vh; overflow-y: auto; border: 1px solid var(--border);
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideInUp 0.3s ease;
         }
         @keyframes slideInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
@@ -165,14 +198,30 @@
         }
         .modal-close:hover { background: #ef4444; color: white; transform: scale(1.1); }
         .modal-search { margin-bottom: 16px; }
+        .api-filter {
+            display: flex; gap: 8px; margin-bottom: 12px; padding: 8px;
+            background: var(--bg-dark); border-radius: 8px;
+        }
+        .api-checkbox {
+            display: flex; align-items: center; gap: 6px; font-size: 0.85rem;
+            color: var(--text-secondary); cursor: pointer;
+        }
+        .api-checkbox input { cursor: pointer; }
         .modal-results { display: grid; gap: 8px; max-height: 400px; overflow-y: auto; }
         .modal-track {
             background: var(--bg-dark); padding: 12px; border-radius: 8px; display: flex;
             gap: 12px; align-items: center; cursor: pointer; transition: all 0.2s ease;
-            border: 1px solid transparent;
+            border: 1px solid transparent; position: relative;
         }
         .modal-track:hover { border-color: var(--green-primary); background: var(--bg-card-hover); }
         .modal-track-cover { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+        
+        /* INFO MODAL */
+        .info-content { padding: 16px 0; }
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .info-label { color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; }
+        .info-value { color: var(--text-primary); font-size: 0.9rem; }
+        
         /* LOADING */
         .loading { text-align: center; padding: 40px; color: var(--text-secondary); }
         .spinner {
@@ -182,8 +231,10 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-secondary); }
         .empty-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
+        
         /* FOOTER */
         .footer { text-align: center; padding: 20px; color: var(--text-secondary); font-size: 0.75rem; margin-top: 40px; opacity: 0.6; }
+        
         /* NOTIFICATION */
         .notification {
             position: fixed; bottom: 20px; right: 20px; background: var(--bg-card);
@@ -194,14 +245,17 @@
         @keyframes slideInRight { from { opacity: 0; transform: translateX(100px); } to { opacity: 1; transform: translateX(0); } }
         .notification.success { border-color: var(--green-primary); }
         .notification.error { border-color: #ef4444; }
+        
         /* RESPONSIVE */
         @media (max-width: 600px) {
             .container { padding: 12px; }
             .header { padding: 24px 16px; }
             .logo { font-size: 1.6rem; }
-            .track-cover { width: 50px; height: 50px; }
+            .track-cover, .modal-track-cover { width: 50px; height: 50px; }
             .track-title { font-size: 0.9rem; }
             .track-artist { font-size: 0.8rem; }
+            .sort-controls { flex-wrap: wrap; }
+            .api-filter { flex-direction: column; }
         }
     </style>
 </head>
@@ -235,6 +289,14 @@
 
         <!-- PLAYLIST SECTION -->
         <div class="section" id="playlistSection">
+            <div class="sort-controls">
+                <span class="sort-label">🔽 Trier par :</span>
+                <button class="sort-btn active" data-sort="score">Notes</button>
+                <button class="sort-btn" data-sort="title">Titre</button>
+                <button class="sort-btn" data-sort="artist">Artiste</button>
+                <button class="sort-btn" data-sort="date">Date d'ajout</button>
+                <button class="sort-btn" data-sort="duration">Durée</button>
+            </div>
             <div id="playlistContent"></div>
         </div>
     </div>
@@ -251,10 +313,31 @@
                 <div class="modal-title">🔄 Remplacer le titre</div>
                 <button class="modal-close" id="modalClose">✕</button>
             </div>
+            <div class="api-filter">
+                <label class="api-checkbox">
+                    <input type="checkbox" id="filterItunes" checked>
+                    <span>iTunes</span>
+                </label>
+                <label class="api-checkbox">
+                    <input type="checkbox" id="filterDeezer" checked>
+                    <span>Deezer</span>
+                </label>
+            </div>
             <div class="modal-search">
                 <input type="text" class="search-box" id="modalSearchInput" placeholder="Rechercher un remplacement...">
             </div>
             <div class="modal-results" id="modalResults"></div>
+        </div>
+    </div>
+
+    <!-- INFO MODAL -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">ℹ️ Informations du titre</div>
+                <button class="modal-close" id="infoModalClose">✕</button>
+            </div>
+            <div class="info-content" id="infoContent"></div>
         </div>
     </div>
 
@@ -283,28 +366,22 @@
         const playlistRef = database.ref('playlist');
 
         // ===== ADMIN LOGIN LOGIC =====
-        const OBFUSCATED_KEY = "0304"; // Le "faux" code apparent
+        const OBFUSCATED_KEY = "0304";
         let isAdmin = false;
         let trackToReplace = null;
+        let currentSortMethod = 'score';
 
-        // Fonction pour vérifier le mot de passe
         function verifyAdminCode(input) {
             if (input.length !== 4) return false;
-            
-            // Reconstitution du "vrai" code à partir de OBFUSCATED_KEY
             let derivedCode = "";
             for (let i = 0; i < OBFUSCATED_KEY.length; i++) {
                 let digit = parseInt(OBFUSCATED_KEY[i]);
-                // Si c'est un chiffre d'indice impair (le 2ème de chaque paire : indices 1 et 3)
-                // On fait -1
                 if (i % 2 !== 0) {
                     derivedCode += (digit - 1).toString();
                 } else {
                     derivedCode += digit.toString();
                 }
             }
-            // derivedCode est donc "0203"
-            
             return input === derivedCode;
         }
 
@@ -369,6 +446,10 @@
         const modalClose = document.getElementById('modalClose');
         const modalSearchInput = document.getElementById('modalSearchInput');
         const modalResults = document.getElementById('modalResults');
+        const infoModal = document.getElementById('infoModal');
+        const infoModalClose = document.getElementById('infoModalClose');
+        const infoContent = document.getElementById('infoContent');
+        const sortBtns = document.querySelectorAll('.sort-btn');
 
         // ===== UNLOCK AUDIO FOR MOBILE =====
         function unlockAudio() {
@@ -405,6 +486,16 @@
             });
         });
 
+        // ===== SORT CONTROLS =====
+        sortBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                sortBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentSortMethod = btn.dataset.sort;
+                loadPlaylist();
+            });
+        });
+
         // ===== DEBOUNCE FUNCTION =====
         function debounce(func, delay) {
             let timeout;
@@ -414,8 +505,8 @@
             };
         }
 
-        // ===== SEARCH ITUNES API WITH EXPLICIT =====
-        async function searchTracks(query, limit = 20) {
+        // ===== SEARCH BOTH APIS (MERGED) =====
+        async function searchBothAPIs(query, limit = 20) {
             if (!query.trim() || query.length < 3) {
                 if (query.length < 3 && query.length > 0) {
                     results.innerHTML = '<div class="empty-state"><div class="empty-icon">⌨️</div><p>Tape au moins 3 lettres...</p></div>';
@@ -428,18 +519,57 @@
             showLoading(results);
 
             try {
-                // IMPORTANT: explicit=Yes pour inclure contenu explicite
-                const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&explicit=Yes&limit=${limit}`);
+                // Recherche parallèle sur les 2 APIs
+                const [itunesResponse, deezerResponse] = await Promise.all([
+                    fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&explicit=Yes&limit=${limit}`),
+                    fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=${limit}`)
+                ]);
+
+                const itunesData = await itunesResponse.json();
+                const deezerData = await deezerResponse.json();
+
+                const itunesResults = (itunesData.results || []).map(track => ({
+                    id: `itunes_${track.trackId}`,
+                    originalId: track.trackId,
+                    title: track.trackName,
+                    artist: track.artistName,
+                    cover: track.artworkUrl100,
+                    duration: Math.floor(track.trackTimeMillis / 1000),
+                    preview: track.previewUrl || null,
+                    explicit: track.trackExplicitness === 'explicit',
+                    api: 'iTunes',
+                    album: track.collectionName,
+                    releaseDate: track.releaseDate,
+                    genre: track.primaryGenreName
+                }));
+
+                const deezerResults = (deezerData.data || []).map(track => ({
+                    id: `deezer_${track.id}`,
+                    originalId: track.id,
+                    title: track.title,
+                    artist: track.artist.name,
+                    cover: track.album.cover_medium,
+                    duration: track.duration,
+                    preview: track.preview || null,
+                    explicit: track.explicit_lyrics,
+                    api: 'Deezer',
+                    album: track.album.title,
+                    releaseDate: track.release_date,
+                    bpm: track.bpm
+                }));
+
+                // Mélange: 1 iTunes, 1 Deezer, 1 iTunes, 1 Deezer...
+                const merged = [];
+                const maxLength = Math.max(itunesResults.length, deezerResults.length);
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+                for (let i = 0; i < maxLength; i++) {
+                    if (itunesResults[i]) merged.push(itunesResults[i]);
+                    if (deezerResults[i]) merged.push(deezerResults[i]);
                 }
-                
-                const data = await response.json();
-                
-                if (data.results && data.results.length > 0) {
-                    displayiTunesResults(data.results);
-                    return data.results;
+
+                if (merged.length > 0) {
+                    displayMixedResults(merged);
+                    return merged;
                 } else {
                     results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Aucun résultat trouvé</p></div>';
                     return [];
@@ -453,45 +583,44 @@
             }
         }
 
-        const debouncedSearch = debounce(searchTracks, 300);
+        const debouncedSearch = debounce(searchBothAPIs, 300);
 
-        function displayiTunesResults(tracks) {
+        function displayMixedResults(tracks) {
             if (tracks.length === 0) {
                 results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Aucun résultat trouvé</p></div>';
                 return;
             }
 
             results.innerHTML = tracks.map(track => {
-                const trackData = {
-                    id: track.trackId,
-                    title: track.trackName,
-                    artist: track.artistName,
-                    cover: track.artworkUrl100,
-                    duration: Math.floor(track.trackTimeMillis / 1000),
-                    preview: track.previewUrl || null,
-                    explicit: track.trackExplicitness === 'explicit'
-                };
+                const hasPreview = !!track.preview;
+                const cardClass = hasPreview ? 'track-card' : 'track-card no-preview';
                 
                 return `
-                <div class="track-card">
-                    <img src="${track.artworkUrl100}" alt="${track.trackName}" class="track-cover" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%231a1d1b%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
+                <div class="${cardClass}">
+                    <div class="api-badge">${track.api}</div>
+                    <img src="${track.cover}" alt="${track.title}" class="track-cover" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%231a1d1b%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
                     <div class="track-info">
-                        <div class="track-title">${escapeHtml(track.trackName)} ${track.trackExplicitness === 'explicit' ? '🅴' : ''}</div>
-                        <div class="track-artist">${escapeHtml(track.artistName)}</div>
-                        <div class="track-duration">${formatDuration(Math.floor(track.trackTimeMillis / 1000))}</div>
+                        <div class="track-title">${escapeHtml(track.title)} ${track.explicit ? '🅴' : ''}</div>
+                        <div class="track-artist">${escapeHtml(track.artist)}</div>
+                        <div class="track-duration">${formatDuration(track.duration)}</div>
+                        ${!hasPreview ? '<div class="no-preview-text">⚠️ Prévisualisation indisponible</div>' : ''}
                     </div>
-                    ${track.previewUrl ? `
-                        <button class="play-preview" data-url="${track.previewUrl}">
+                    ${hasPreview ? `
+                        <button class="play-preview" data-url="${track.preview}">
                             ▶
                         </button>
-                    ` : ''}
-                    <button class="add-btn" data-track='${JSON.stringify(trackData)}'>
+                    ` : `
+                        <button class="play-preview" disabled>
+                            ⏸
+                        </button>
+                    `}
+                    <button class="add-btn" data-track='${JSON.stringify(track)}'>
                         + Ajouter
                     </button>
                 </div>
             `}).join('');
 
-            document.querySelectorAll('.play-preview').forEach(btn => {
+            document.querySelectorAll('.play-preview:not(:disabled)').forEach(btn => {
                 btn.addEventListener('click', function() {
                     playPreview(this.dataset.url, this);
                 });
@@ -596,6 +725,67 @@
             }
         }
 
+        // ===== SHOW TRACK INFO =====
+        function showTrackInfo(track) {
+            const infoHTML = `
+                <div class="info-row">
+                    <div class="info-label">Titre</div>
+                    <div class="info-value">${escapeHtml(track.title)}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Artiste</div>
+                    <div class="info-value">${escapeHtml(track.artist)}</div>
+                </div>
+                ${track.album ? `
+                <div class="info-row">
+                    <div class="info-label">Album</div>
+                    <div class="info-value">${escapeHtml(track.album)}</div>
+                </div>
+                ` : ''}
+                <div class="info-row">
+                    <div class="info-label">Durée</div>
+                    <div class="info-value">${formatDuration(track.duration)}</div>
+                </div>
+                ${track.releaseDate ? `
+                <div class="info-row">
+                    <div class="info-label">Date de sortie</div>
+                    <div class="info-value">${new Date(track.releaseDate).toLocaleDateString('fr-FR')}</div>
+                </div>
+                ` : ''}
+                ${track.genre ? `
+                <div class="info-row">
+                    <div class="info-label">Genre</div>
+                    <div class="info-value">${escapeHtml(track.genre)}</div>
+                </div>
+                ` : ''}
+                ${track.bpm ? `
+                <div class="info-row">
+                    <div class="info-label">BPM</div>
+                    <div class="info-value">${track.bpm}</div>
+                </div>
+                ` : ''}
+                <div class="info-row">
+                    <div class="info-label">Source API</div>
+                    <div class="info-value">${track.api || 'Deezer (ancien)'}</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Score</div>
+                    <div class="info-value">${track.score || 0} votes</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Ajouté le</div>
+                    <div class="info-value">${new Date(track.addedAt || Date.now()).toLocaleDateString('fr-FR')}</div>
+                </div>
+            `;
+            
+            infoContent.innerHTML = infoHTML;
+            infoModal.classList.add('active');
+        }
+
+        infoModalClose.addEventListener('click', () => {
+            infoModal.classList.remove('active');
+        });
+
         // ===== REPLACE TRACK (ADMIN) =====
         function openReplaceModal(track) {
             if (!isAdmin) return;
@@ -614,12 +804,66 @@
 
             modalResults.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
 
-            try {
-                const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&explicit=Yes&limit=15`);
-                const data = await response.json();
+            const useItunes = document.getElementById('filterItunes').checked;
+            const useDeezer = document.getElementById('filterDeezer').checked;
 
-                if (data.results && data.results.length > 0) {
-                    displayModalResults(data.results);
+            try {
+                const promises = [];
+                
+                if (useItunes) {
+                    promises.push(
+                        fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&explicit=Yes&limit=10`)
+                            .then(r => r.json())
+                            .then(data => (data.results || []).map(track => ({
+                                id: `itunes_${track.trackId}`,
+                                originalId: track.trackId,
+                                title: track.trackName,
+                                artist: track.artistName,
+                                cover: track.artworkUrl100,
+                                duration: Math.floor(track.trackTimeMillis / 1000),
+                                preview: track.previewUrl || null,
+                                explicit: track.trackExplicitness === 'explicit',
+                                api: 'iTunes',
+                                album: track.collectionName,
+                                releaseDate: track.releaseDate,
+                                genre: track.primaryGenreName
+                            })))
+                    );
+                }
+
+                if (useDeezer) {
+                    promises.push(
+                        fetch(`https://api.deezer.com/search?q=${encodeURIComponent(query)}&limit=10`)
+                            .then(r => r.json())
+                            .then(data => (data.data || []).map(track => ({
+                                id: `deezer_${track.id}`,
+                                originalId: track.id,
+                                title: track.title,
+                                artist: track.artist.name,
+                                cover: track.album.cover_medium,
+                                duration: track.duration,
+                                preview: track.preview || null,
+                                explicit: track.explicit_lyrics,
+                                api: 'Deezer',
+                                album: track.album.title,
+                                releaseDate: track.release_date,
+                                bpm: track.bpm
+                            })))
+                    );
+                }
+
+                const results = await Promise.all(promises);
+                const merged = [];
+                const maxLength = Math.max(...results.map(r => r.length));
+                
+                for (let i = 0; i < maxLength; i++) {
+                    results.forEach(resultSet => {
+                        if (resultSet[i]) merged.push(resultSet[i]);
+                    });
+                }
+
+                if (merged.length > 0) {
+                    displayModalResults(merged);
                 } else {
                     modalResults.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">Aucun résultat</div>';
                 }
@@ -630,30 +874,34 @@
         }
 
         function displayModalResults(tracks) {
-            modalResults.innerHTML = tracks.map(track => `
-                <div class="modal-track" onclick='replaceTrackWith(${JSON.stringify({
-                    id: track.trackId,
-                    title: track.trackName,
-                    artist: track.artistName,
-                    cover: track.artworkUrl100,
-                    duration: Math.floor(track.trackTimeMillis / 1000),
-                    preview: track.previewUrl || null,
-                    explicit: track.trackExplicitness === 'explicit'
-                })})'>
-                    <img src="${track.artworkUrl100}" alt="${track.trackName}" class="modal-track-cover">
+            modalResults.innerHTML = tracks.map(track => {
+                const hasPreview = !!track.preview;
+                return `
+                <div class="modal-track" onclick='${hasPreview ? '' : 'return false;'}'>
+                    <div class="api-badge">${track.api}</div>
+                    <img src="${track.cover}" alt="${track.title}" class="modal-track-cover">
                     <div style="flex: 1; min-width: 0;">
                         <div style="font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            ${escapeHtml(track.trackName)} ${track.trackExplicitness === 'explicit' ? '🅴' : ''}
+                            ${escapeHtml(track.title)} ${track.explicit ? '🅴' : ''}
                         </div>
                         <div style="color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            ${escapeHtml(track.artistName)}
+                            ${escapeHtml(track.artist)}
                         </div>
                         <div style="color: var(--green-primary); font-size: 0.75rem;">
-                            ${formatDuration(Math.floor(track.trackTimeMillis / 1000))}
+                            ${formatDuration(track.duration)}
                         </div>
+                        ${!hasPreview ? '<div style="color: #ef4444; font-size: 0.7rem; margin-top: 2px;">⚠️ Pas de preview</div>' : ''}
                     </div>
+                    ${hasPreview ? `
+                        <button class="play-preview" data-url="${track.preview}" onclick="event.stopPropagation(); playPreview('${track.preview}', this);">
+                            ▶
+                        </button>
+                    ` : ''}
+                    <button class="add-btn" onclick='event.stopPropagation(); replaceTrackWith(${JSON.stringify(track)})' style="font-size: 0.75rem; padding: 6px 12px;">
+                        Choisir
+                    </button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         async function replaceTrackWith(newTrack) {
@@ -686,12 +934,25 @@
         }
 
         modalClose.addEventListener('click', closeReplaceModal);
+        
+        document.getElementById('filterItunes').addEventListener('change', () => {
+            if (modalSearchInput.value) searchInModal(modalSearchInput.value);
+        });
+        
+        document.getElementById('filterDeezer').addEventListener('change', () => {
+            if (modalSearchInput.value) searchInModal(modalSearchInput.value);
+        });
+
         modalSearchInput.addEventListener('input', debounce((e) => {
             searchInModal(e.target.value);
         }, 300));
 
         replaceModal.addEventListener('click', (e) => {
             if (e.target === replaceModal) closeReplaceModal();
+        });
+
+        infoModal.addEventListener('click', (e) => {
+            if (e.target === infoModal) infoModal.classList.remove('active');
         });
 
         // ===== VOTE SYSTEM =====
@@ -722,7 +983,7 @@
 
             playlistRef.on('value', (snapshot) => {
                 playlistData = snapshot.val() || {};
-                const tracks = Object.values(playlistData);
+                let tracks = Object.values(playlistData);
 
                 if (tracks.length === 0) {
                     playlistContent.innerHTML = '<div class="empty-state"><div class="empty-icon">🎵</div><p>La playlist est vide.<br>Ajoute des sons !</p></div>';
@@ -730,7 +991,25 @@
                     return;
                 }
 
-                tracks.sort((a, b) => (b.score || 0) - (a.score || 0));
+                // Tri selon méthode choisie
+                switch(currentSortMethod) {
+                    case 'score':
+                        tracks.sort((a, b) => (b.score || 0) - (a.score || 0));
+                        break;
+                    case 'title':
+                        tracks.sort((a, b) => a.title.localeCompare(b.title));
+                        break;
+                    case 'artist':
+                        tracks.sort((a, b) => a.artist.localeCompare(b.artist));
+                        break;
+                    case 'date':
+                        tracks.sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+                        break;
+                    case 'duration':
+                        tracks.sort((a, b) => (a.duration || 0) - (b.duration || 0));
+                        break;
+                }
+
                 playlistCount.textContent = tracks.length;
 
                 playlistContent.innerHTML = tracks.map(track => {
@@ -743,6 +1022,7 @@
                     const playBtnClass = isPlaying ? 'playing' : '';
 
                     const isOld = isOldAPI(track);
+                    const hasPreview = !!track.preview;
 
                     return `
                     <div class="playlist-item">
@@ -764,16 +1044,23 @@
                             <div class="track-artist">${escapeHtml(track.artist)}</div>
                             <div class="track-duration">${formatDuration(track.duration)}</div>
                         </div>
-                        ${track.preview ? `
+                        ${hasPreview ? `
                             <button class="play-preview ${playBtnClass}" data-url="${track.preview}">
                                 ${playBtnIcon}
                             </button>
-                        ` : ''}
+                        ` : `
+                            <button class="play-preview" disabled>
+                                ⏸
+                            </button>
+                        `}
+                        <button class="admin-btn info-btn" onclick='showTrackInfo(${JSON.stringify(track)})'>
+                            ℹ️
+                        </button>
                         <div class="admin-controls ${isAdmin ? 'active' : ''}">
                             <button class="admin-btn replace-btn" onclick='openReplaceModal(${JSON.stringify(track)})'>
                                 🔄
                             </button>
-                            <button class="admin-btn delete-btn" onclick="deleteTrack(${track.id})">
+                            <button class="admin-btn delete-btn" onclick="deleteTrack('${track.id}')">
                                 🗑️
                             </button>
                         </div>
@@ -782,11 +1069,11 @@
 
                 document.querySelectorAll('.vote-btn:not(.voted)').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        vote(parseInt(this.dataset.id), parseInt(this.dataset.value), this);
+                        vote(this.dataset.id, parseInt(this.dataset.value), this);
                     });
                 });
 
-                document.querySelectorAll('.play-preview').forEach(btn => {
+                document.querySelectorAll('.play-preview:not(:disabled)').forEach(btn => {
                     btn.addEventListener('click', function() {
                         playPreview(this.dataset.url, this);
                     });
@@ -804,12 +1091,12 @@
         });
 
         searchBtn.addEventListener('click', () => {
-            searchTracks(searchInput.value);
+            searchBothAPIs(searchInput.value);
         });
 
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                searchTracks(searchInput.value);
+                searchBothAPIs(searchInput.value);
             }
         });
 
