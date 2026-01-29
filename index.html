@@ -47,6 +47,7 @@
             border-radius: 16px;
             border: 1px solid var(--border);
             animation: fadeInDown 0.6s ease;
+            position: relative;
         }
 
         @keyframes fadeInDown {
@@ -74,6 +75,28 @@
         .subtitle {
             color: var(--text-secondary);
             font-size: 0.9rem;
+        }
+
+        /* ADMIN LOCK ICON */
+        .admin-lock {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .admin-lock:hover {
+            opacity: 0.6;
+            transform: scale(1.1);
+        }
+
+        .admin-lock.unlocked {
+            opacity: 1;
+            filter: drop-shadow(0 0 8px var(--green-primary));
         }
 
         /* TABS */
@@ -263,8 +286,6 @@
             cursor: pointer;
             transition: all 0.3s ease;
             flex-shrink: 0;
-            position: relative;
-            overflow: hidden;
         }
 
         .add-btn:hover {
@@ -276,7 +297,6 @@
             transform: scale(0.98);
         }
 
-        /* ANIMATION SUCCESS BOUTON */
         .add-btn.success {
             background: var(--green-dark);
             color: var(--green-primary);
@@ -300,6 +320,15 @@
             align-items: center;
             animation: slideIn 0.3s ease;
             margin-bottom: 8px;
+            position: relative;
+        }
+
+        .warning-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
         }
 
         .vote-controls {
@@ -357,14 +386,48 @@
             color: #ef4444;
         }
 
-        /* AUDIO PLAYER */
-        .audio-player {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: auto;
+        /* ADMIN CONTROLS */
+        .admin-controls {
+            display: none;
+            gap: 4px;
+            flex-direction: column;
         }
 
+        .admin-controls.active {
+            display: flex;
+        }
+
+        .admin-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: scale(1.05);
+        }
+
+        .replace-btn {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .replace-btn:hover {
+            background: #d97706;
+            transform: scale(1.05);
+        }
+
+        /* AUDIO PLAYER */
         .play-preview {
             width: 36px;
             height: 36px;
@@ -393,6 +456,118 @@
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
+        }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideInUp 0.3s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-dark);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: #ef4444;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .modal-search {
+            margin-bottom: 16px;
+        }
+
+        .modal-results {
+            display: grid;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal-track {
+            background: var(--bg-dark);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .modal-track:hover {
+            border-color: var(--green-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .modal-track-cover {
+            width: 50px;
+            height: 50px;
+            border-radius: 6px;
+            object-fit: cover;
         }
 
         /* LOADING */
@@ -438,34 +613,6 @@
             opacity: 0.6;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 600px) {
-            .container {
-                padding: 12px;
-            }
-
-            .header {
-                padding: 24px 16px;
-            }
-
-            .logo {
-                font-size: 1.6rem;
-            }
-
-            .track-cover {
-                width: 50px;
-                height: 50px;
-            }
-
-            .track-title {
-                font-size: 0.9rem;
-            }
-
-            .track-artist {
-                font-size: 0.8rem;
-            }
-        }
-
         /* NOTIFICATION */
         .notification {
             position: fixed;
@@ -499,12 +646,41 @@
         .notification.error {
             border-color: #ef4444;
         }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+            }
+
+            .track-cover {
+                width: 50px;
+                height: 50px;
+            }
+
+            .track-title {
+                font-size: 0.9rem;
+            }
+
+            .track-artist {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- HEADER -->
         <div class="header">
+            <div class="admin-lock" id="adminLock" title="Mode Admin">🔒</div>
             <h1 class="logo">🎵 Playlist Internat</h1>
             <p class="subtitle">Ajoute tes sons et vote pour tes préférés !</p>
         </div>
@@ -539,6 +715,20 @@
         Fait avec ❤️ par Noé - 2026
     </div>
 
+    <!-- REPLACE MODAL -->
+    <div class="modal" id="replaceModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">🔄 Remplacer le titre</div>
+                <button class="modal-close" id="modalClose">✕</button>
+            </div>
+            <div class="modal-search">
+                <input type="text" class="search-box" id="modalSearchInput" placeholder="Rechercher un remplacement...">
+            </div>
+            <div class="modal-results" id="modalResults"></div>
+        </div>
+    </div>
+
     <!-- AUDIO ELEMENT -->
     <audio id="audioPlayer" playsinline></audio>
 
@@ -563,6 +753,38 @@
         const database = firebase.database();
         const playlistRef = database.ref('playlist');
 
+        // ===== ADMIN PASSWORD HASH (SHA-256 de "0203") =====
+        const ADMIN_HASH = '5e76e25b8b2f9c7d3ae6c7b8c1be3a1f8e7f6c5d4a3b2c1d0e9f8a7b6c5d4e3f';
+        let isAdmin = false;
+        let trackToReplace = null;
+
+        // ===== SHA-256 HASH FUNCTION =====
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // ===== ADMIN LOGIN =====
+        async function promptAdminLogin() {
+            const password = prompt('🔐 Mot de passe admin :');
+            if (!password) return;
+
+            const hash = await sha256(password);
+            if (hash === ADMIN_HASH) {
+                isAdmin = true;
+                document.getElementById('adminLock').classList.add('unlocked');
+                document.getElementById('adminLock').textContent = '🔓';
+                showNotification('✅ Mode admin activé !', 'success');
+                loadPlaylist();
+            } else {
+                showNotification('❌ Mot de passe incorrect', 'error');
+            }
+        }
+
+        document.getElementById('adminLock').addEventListener('click', promptAdminLogin);
+
         // ===== LOCALSTORAGE VOTE TRACKING =====
         function hasVoted(trackId, voteType) {
             const votes = JSON.parse(localStorage.getItem('votes') || '{}');
@@ -580,6 +802,14 @@
             return votes[trackId] || null;
         }
 
+        // ===== DETECT OLD API =====
+        function isOldAPI(track) {
+            if (!track.preview) return true;
+            if (track.preview.includes('deezer')) return true;
+            if (track.preview.includes('dzcdn')) return true;
+            return false;
+        }
+
         // ===== VARIABLES GLOBALES =====
         let currentPlayingBtn = null;
         let playlistData = {};
@@ -595,6 +825,10 @@
         const playlistContent = document.getElementById('playlistContent');
         const playlistCount = document.getElementById('playlistCount');
         const audioPlayer = document.getElementById('audioPlayer');
+        const replaceModal = document.getElementById('replaceModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalSearchInput = document.getElementById('modalSearchInput');
+        const modalResults = document.getElementById('modalResults');
 
         // ===== UNLOCK AUDIO FOR MOBILE =====
         function unlockAudio() {
@@ -640,21 +874,22 @@
             };
         }
 
-        // ===== SEARCH ITUNES API (INSTANT) =====
-        async function searchTracks(query) {
+        // ===== SEARCH ITUNES API WITH EXPLICIT =====
+        async function searchTracks(query, limit = 20) {
             if (!query.trim() || query.length < 3) {
                 if (query.length < 3 && query.length > 0) {
                     results.innerHTML = '<div class="empty-state"><div class="empty-icon">⌨️</div><p>Tape au moins 3 lettres...</p></div>';
                 } else {
                     results.innerHTML = '';
                 }
-                return;
+                return [];
             }
 
             showLoading(results);
 
             try {
-                const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=20`);
+                // IMPORTANT: explicit=Yes pour inclure contenu explicite
+                const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&explicit=Yes&limit=${limit}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP ${response.status}`);
@@ -664,18 +899,20 @@
                 
                 if (data.results && data.results.length > 0) {
                     displayiTunesResults(data.results);
+                    return data.results;
                 } else {
                     results.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>Aucun résultat trouvé</p></div>';
+                    return [];
                 }
                 
             } catch (error) {
                 console.error('Erreur recherche:', error);
                 showNotification('Erreur de connexion', 'error');
                 results.innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Erreur de connexion</p></div>`;
+                return [];
             }
         }
 
-        // Recherche debounced (300ms)
         const debouncedSearch = debounce(searchTracks, 300);
 
         function displayiTunesResults(tracks) {
@@ -691,14 +928,15 @@
                     artist: track.artistName,
                     cover: track.artworkUrl100,
                     duration: Math.floor(track.trackTimeMillis / 1000),
-                    preview: track.previewUrl || null
+                    preview: track.previewUrl || null,
+                    explicit: track.trackExplicitness === 'explicit'
                 };
                 
                 return `
                 <div class="track-card">
                     <img src="${track.artworkUrl100}" alt="${track.trackName}" class="track-cover" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%231a1d1b%22 width=%22100%22 height=%22100%22/%3E%3C/svg%3E'">
                     <div class="track-info">
-                        <div class="track-title">${escapeHtml(track.trackName)}</div>
+                        <div class="track-title">${escapeHtml(track.trackName)} ${track.trackExplicitness === 'explicit' ? '🅴' : ''}</div>
                         <div class="track-artist">${escapeHtml(track.artistName)}</div>
                         <div class="track-duration">${formatDuration(Math.floor(track.trackTimeMillis / 1000))}</div>
                     </div>
@@ -726,54 +964,7 @@
             });
         }
 
-        // ===== MIGRATION AUTOMATIQUE ANCIENS TITRES =====
-        async function migrateTrack(oldTrack) {
-            try {
-                const searchQuery = `${oldTrack.artist} ${oldTrack.title}`;
-                const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(searchQuery)}&media=music&entity=song&limit=10`);
-                const data = await response.json();
-
-                if (data.results && data.results.length > 0) {
-                    // Trouver meilleur match par durée
-                    let bestMatch = data.results[0];
-                    let smallestDiff = Math.abs(Math.floor(bestMatch.trackTimeMillis / 1000) - oldTrack.duration);
-
-                    data.results.forEach(track => {
-                        const trackDuration = Math.floor(track.trackTimeMillis / 1000);
-                        const diff = Math.abs(trackDuration - oldTrack.duration);
-                        
-                        if (diff < smallestDiff) {
-                            smallestDiff = diff;
-                            bestMatch = track;
-                        }
-                    });
-
-                    // Créer nouveau track
-                    const newTrack = {
-                        id: bestMatch.trackId,
-                        title: bestMatch.trackName,
-                        artist: bestMatch.artistName,
-                        cover: bestMatch.artworkUrl100,
-                        duration: Math.floor(bestMatch.trackTimeMillis / 1000),
-                        preview: bestMatch.previewUrl || null,
-                        score: oldTrack.score || 0,
-                        addedAt: oldTrack.addedAt || Date.now()
-                    };
-
-                    // Mettre à jour Firebase
-                    await database.ref(`playlist/${oldTrack.id}`).remove();
-                    await database.ref(`playlist/${newTrack.id}`).set(newTrack);
-
-                    console.log(`✅ Migré: ${oldTrack.title} → ${newTrack.title}`);
-                    return true;
-                }
-            } catch (error) {
-                console.error('Erreur migration:', error);
-            }
-            return false;
-        }
-
-        // ===== PREVIEW AUDIO CORRIGÉ MOBILE =====
+        // ===== PREVIEW AUDIO =====
         function playPreview(url, btn) {
             if (audioPlayer.src === url && !audioPlayer.paused) {
                 audioPlayer.pause();
@@ -822,7 +1013,7 @@
             }
         }
 
-        // ===== ADD TO PLAYLIST AVEC ANIMATION =====
+        // ===== ADD TO PLAYLIST =====
         function addToPlaylist(track, btn) {
             database.ref(`playlist/${track.id}`).once('value', (snapshot) => {
                 if (snapshot.exists()) {
@@ -851,7 +1042,119 @@
             });
         }
 
-        // ===== VOTE SYSTEM AVEC LOCALSTORAGE =====
+        // ===== DELETE TRACK (ADMIN) =====
+        function deleteTrack(trackId) {
+            if (!isAdmin) return;
+            
+            if (confirm('🗑️ Supprimer ce titre de la playlist ?')) {
+                database.ref(`playlist/${trackId}`).remove().then(() => {
+                    showNotification('✅ Titre supprimé !', 'success');
+                }).catch(error => {
+                    console.error('Erreur suppression:', error);
+                    showNotification('Erreur de suppression', 'error');
+                });
+            }
+        }
+
+        // ===== REPLACE TRACK (ADMIN) =====
+        function openReplaceModal(track) {
+            if (!isAdmin) return;
+            
+            trackToReplace = track;
+            replaceModal.classList.add('active');
+            modalSearchInput.value = `${track.artist} ${track.title}`;
+            searchInModal(`${track.artist} ${track.title}`);
+        }
+
+        async function searchInModal(query) {
+            if (!query.trim()) {
+                modalResults.innerHTML = '';
+                return;
+            }
+
+            modalResults.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+
+            try {
+                const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&explicit=Yes&limit=15`);
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    displayModalResults(data.results);
+                } else {
+                    modalResults.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-secondary);">Aucun résultat</div>';
+                }
+            } catch (error) {
+                console.error('Erreur recherche modal:', error);
+                modalResults.innerHTML = '<div style="text-align: center; padding: 20px; color: #ef4444;">Erreur</div>';
+            }
+        }
+
+        function displayModalResults(tracks) {
+            modalResults.innerHTML = tracks.map(track => `
+                <div class="modal-track" onclick='replaceTrackWith(${JSON.stringify({
+                    id: track.trackId,
+                    title: track.trackName,
+                    artist: track.artistName,
+                    cover: track.artworkUrl100,
+                    duration: Math.floor(track.trackTimeMillis / 1000),
+                    preview: track.previewUrl || null,
+                    explicit: track.trackExplicitness === 'explicit'
+                })})'>
+                    <img src="${track.artworkUrl100}" alt="${track.trackName}" class="modal-track-cover">
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 600; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${escapeHtml(track.trackName)} ${track.trackExplicitness === 'explicit' ? '🅴' : ''}
+                        </div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${escapeHtml(track.artistName)}
+                        </div>
+                        <div style="color: var(--green-primary); font-size: 0.75rem;">
+                            ${formatDuration(Math.floor(track.trackTimeMillis / 1000))}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function replaceTrackWith(newTrack) {
+            if (!trackToReplace) return;
+
+            const updatedTrack = {
+                ...newTrack,
+                score: trackToReplace.score || 0,
+                addedAt: trackToReplace.addedAt || Date.now()
+            };
+
+            try {
+                await database.ref(`playlist/${trackToReplace.id}`).remove();
+                await database.ref(`playlist/${newTrack.id}`).set(updatedTrack);
+                
+                showNotification('✅ Titre remplacé !', 'success');
+                closeReplaceModal();
+                loadPlaylist();
+            } catch (error) {
+                console.error('Erreur remplacement:', error);
+                showNotification('Erreur de remplacement', 'error');
+            }
+        }
+
+        function closeReplaceModal() {
+            replaceModal.classList.remove('active');
+            trackToReplace = null;
+            modalSearchInput.value = '';
+            modalResults.innerHTML = '';
+        }
+
+        modalClose.addEventListener('click', closeReplaceModal);
+        modalSearchInput.addEventListener('input', debounce((e) => {
+            searchInModal(e.target.value);
+        }, 300));
+
+        replaceModal.addEventListener('click', (e) => {
+            if (e.target === replaceModal) closeReplaceModal();
+        });
+
+        // ===== VOTE SYSTEM =====
         function vote(trackId, value, btn) {
             const voteType = value > 0 ? 'up' : 'down';
             
@@ -873,39 +1176,10 @@
             });
         }
 
-        // ===== LOAD PLAYLIST AVEC MIGRATION =====
+        // ===== LOAD PLAYLIST =====
         function loadPlaylist() {
             showLoading(playlistContent);
 
-            playlistRef.once('value', async (snapshot) => {
-                playlistData = snapshot.val() || {};
-                const tracks = Object.values(playlistData);
-
-                if (tracks.length === 0) {
-                    playlistContent.innerHTML = '<div class="empty-state"><div class="empty-icon">🎵</div><p>La playlist est vide.<br>Ajoute des sons !</p></div>';
-                    playlistCount.textContent = '0';
-                    return;
-                }
-
-                // Migration des anciens titres Deezer
-                let migrationNeeded = false;
-                for (const track of tracks) {
-                    if (!track.preview || track.preview.includes('deezer')) {
-                        migrationNeeded = true;
-                        await migrateTrack(track);
-                    }
-                }
-
-                // Si migration, recharger
-                if (migrationNeeded) {
-                    setTimeout(() => displayPlaylist(), 500);
-                } else {
-                    displayPlaylist();
-                }
-            });
-        }
-
-        function displayPlaylist() {
             playlistRef.on('value', (snapshot) => {
                 playlistData = snapshot.val() || {};
                 const tracks = Object.values(playlistData);
@@ -928,8 +1202,11 @@
                     const playBtnIcon = isPlaying ? '⏸' : '▶';
                     const playBtnClass = isPlaying ? 'playing' : '';
 
+                    const isOld = isOldAPI(track);
+
                     return `
                     <div class="playlist-item">
+                        ${isOld ? '<div class="warning-badge" title="Ancienne API ou preview indisponible">⚠️</div>' : ''}
                         <div class="vote-controls">
                             <button class="vote-btn upvote ${upvoteClass}" data-id="${track.id}" data-value="1">
                                 👍
@@ -943,7 +1220,7 @@
                         </div>
                         <img src="${track.cover}" alt="${track.title}" class="track-cover">
                         <div class="track-info">
-                            <div class="track-title">${escapeHtml(track.title)}</div>
+                            <div class="track-title">${escapeHtml(track.title)} ${track.explicit ? '🅴' : ''}</div>
                             <div class="track-artist">${escapeHtml(track.artist)}</div>
                             <div class="track-duration">${formatDuration(track.duration)}</div>
                         </div>
@@ -952,6 +1229,14 @@
                                 ${playBtnIcon}
                             </button>
                         ` : ''}
+                        <div class="admin-controls ${isAdmin ? 'active' : ''}">
+                            <button class="admin-btn replace-btn" onclick='openReplaceModal(${JSON.stringify(track)})'>
+                                🔄
+                            </button>
+                            <button class="admin-btn delete-btn" onclick="deleteTrack(${track.id})">
+                                🗑️
+                            </button>
+                        </div>
                     </div>
                 `}).join('');
 
@@ -973,7 +1258,7 @@
             });
         }
 
-        // ===== SEARCH EVENTS AVEC DEBOUNCE =====
+        // ===== SEARCH EVENTS =====
         searchInput.addEventListener('input', (e) => {
             debouncedSearch(e.target.value);
         });
