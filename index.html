@@ -477,6 +477,123 @@
             }
         }
 
+    
+        /* POPUP STYLES */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background: var(--bg-card);
+            border: 1px solid var(--green-primary);
+            box-shadow: 0 0 30px rgba(74, 222, 128, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 550px;
+            width: 90%;
+            text-align: center;
+            transform: translateY(30px) scale(0.95);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .popup-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        .popup-title {
+            font-size: 1.8rem;
+            color: var(--green-primary);
+            margin-bottom: 15px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .popup-text {
+            color: #e0e0e0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .popup-note {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            color: #aaa;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .popup-note a {
+            color: var(--green-primary);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px dashed var(--green-primary);
+            padding-bottom: 2px;
+            transition: all 0.2s;
+        }
+
+        .popup-note a:hover {
+            color: var(--green-secondary);
+            border-bottom-style: solid;
+        }
+
+        .popup-btn {
+            background: linear-gradient(135deg, var(--green-primary), var(--green-secondary));
+            color: #0f1110;
+            font-weight: 800;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 20px rgba(74, 222, 128, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 15px 30px rgba(74, 222, 128, 0.4);
+        }
+
+        .popup-btn:active {
+            transform: translateY(1px) scale(0.98);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 
+            40% {transform: translateY(-10px);} 
+            60% {transform: translateY(-5px);} 
+        }
+
     </style>
 </head>
 <body>
@@ -490,26 +607,13 @@
 
         <!-- TABS -->
         <div class="tabs">
-            <button class="tab active" data-tab="search">🔍 Rechercher</button>
-            <button class="tab" data-tab="playlist">📋 Playlist (<span id="playlistCount">0</span>)</button>
+            
+            <button class="tab active" data-tab="playlist">📋 Playlist (<span id="playlistCount">0</span>)</button>
         </div>
 
         <!-- SEARCH SECTION -->
-        <div class="section active" id="searchSection">
-            <div class="search-container">
-                <input type="text" class="search-box" id="searchInput" placeholder="Rechercher un titre, artiste...">
-                <button class="search-btn" id="searchBtn">
-                    <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
-                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="manual-add-link" id="manualAddLink">+ Ajout manuel</div>
-            <div class="results" id="results"></div>
-        </div>
-
         <!-- PLAYLIST SECTION -->
-        <div class="section" id="playlistSection">
+        <div class="section active" id="playlistSection">
             <div class="sort-controls">
                 <span class="sort-label">🔽 Trier par :</span>
                 <button class="sort-btn active" data-sort="score">Notes</button>
@@ -526,35 +630,6 @@
     <!-- FOOTER -->
     <div class="footer">
         Fait avec ❤️ par Noé - 2026
-    </div>
-
-    <!-- MANUAL ADD MODAL -->
-    <div class="modal" id="manualModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">➕ Ajout manuel</div>
-                <button class="modal-close" id="manualModalClose">✕</button>
-            </div>
-            <form class="manual-form" id="manualForm">
-                <div class="form-group">
-                    <label class="form-label">Titre *</label>
-                    <input type="text" class="form-input" id="manualTitle" placeholder="Ex: LOVE YOU" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Artiste *</label>
-                    <input type="text" class="form-input" id="manualArtist" placeholder="Ex: nono la grinta" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Album (optionnel)</label>
-                    <input type="text" class="form-input" id="manualAlbum" placeholder="Ex: Album">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Durée en secondes (optionnel)</label>
-                    <input type="number" class="form-input" id="manualDuration" placeholder="Ex: 200">
-                </div>
-                <button type="submit" class="form-submit">Ajouter à la playlist</button>
-            </form>
-        </div>
     </div>
 
     <!-- REPLACE MODAL -->
@@ -590,6 +665,34 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
+
+        // SAFEGUARD FOR REMOVED ELEMENTS
+        const originalGetElementById = document.getElementById.bind(document);
+        document.getElementById = function(id) {
+            const element = originalGetElementById(id);
+            if (!element && ['searchInput', 'searchBtn', 'manualAddLink', 'manualModal', 'manualForm', 'manualModalClose', 'manualTitle', 'manualArtist', 'manualAlbum', 'manualDuration'].includes(id)) {
+                // Return a dummy element that absorbs events
+                return document.createElement('div');
+            }
+            return element;
+        };
+
+
+        // POPUP LOGIC
+        document.addEventListener('DOMContentLoaded', () => {
+            const popup = document.getElementById('infoPopup');
+            const closeBtn = document.getElementById('closePopupBtn');
+
+            // Show popup with animation
+            setTimeout(() => {
+                popup.classList.add('active');
+            }, 800);
+
+            closeBtn.addEventListener('click', () => {
+                popup.classList.remove('active');
+            });
+        });
+
         // ===== FIREBASE CONFIG =====
         const firebaseConfig = {
             apiKey: "AIzaSyC7IaaSbME1fEsmqiYBLcQTHJvZ3kzsGbQ",
@@ -1565,5 +1668,21 @@
         
         loadPlaylist();
     </script>
+
+    <!-- MODERN POPUP -->
+    <div class="popup-overlay" id="infoPopup">
+        <div class="popup-content">
+            <div class="popup-icon">🔒</div>
+            <div class="popup-title">Playlist Verrouillée</div>
+            <p class="popup-text">
+                Seule la consultation de la playlist est désormais disponible, car la sélection finale a été confirmée et validée pour la soirée.
+            </p>
+            <div class="popup-note">
+                Si vous souhaitez tout de même proposer un titre, vous pouvez le faire via l'onglet Contact sur <a href="https://internat.noecyber.fr" target="_blank">internat.noecyber.fr</a> ou en parler directement à Noé Besançon en chambre 140.
+            </div>
+            <button class="popup-btn" id="closePopupBtn">C'est noté</button>
+        </div>
+    </div>
+
 </body>
 </html>
